@@ -18,7 +18,7 @@ Open a terminal and run
 
 ```
     go install github.com/graniticio/granitic-yaml/cmd/grnc-yaml-bind
-    go install github.com/graniticio/granitic-yaml/cmd/grnc-yaml-bind
+    go install github.com/graniticio/granitic-yaml/cmd/grnc-yaml-project
 ```
 
 If you will only be using YAML for your Granitic projects, you might want to remove the JSON versions of the
@@ -124,7 +124,7 @@ one package and component your project will start.
 
 ## Examples
 
-The following examples shows what the component definition files and configuration files from Granitic's 
+The following examples show YAML versions of the component definition files and configuration files from Granitic's 
 [Advanced validation tutorial](http://www.granitic.io/tutorials/advanced-validation) 
 
 
