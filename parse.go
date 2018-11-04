@@ -1,20 +1,25 @@
+// Copyright 2018 Granitic. All rights reserved.
+// Use of this source code is governed by an Apache 2.0 license that can be found in the LICENSE file at the root of this project.
 package granitic_yaml
 
 import (
 	"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"strconv"
 )
 
+// Handles the conversion of YAML files into the intermediate JSON-like structures used by Granitic's configuration
+// and component definition processes
+//
+// Implements the jsonmerge.ContentParser interface in Granitic
 type YamlContentParser struct {
 }
 
+// Implements jsonmerge.ContentParser
 func (ycp *YamlContentParser) ParseInto(data []byte, target interface{}) error {
 
 	var firstPass interface{}
 
-	//Parse as YAML - will have interface{} keyed maps and not detect bools and numbers
 	if err := yaml.Unmarshal(data, &firstPass); err != nil {
 		return err
 	}
@@ -25,19 +30,11 @@ func (ycp *YamlContentParser) ParseInto(data []byte, target interface{}) error {
 		*target.(*interface{}) = retyped
 	}
 
-	/*if err := yaml_mapstr.Unmarshal(data, &interim); err != nil {
-		return err
-	}
-
-	untyped := interim.(map[string]interface{})
-
-	ycp.reinstateTypes(untyped)*/
-
-	//*target.(*interface{}) = untyped
-
 	return nil
 }
 
+// Converts the map[interface{}]interface{} maps output by the YAML parser into the map[string]interface{} maps
+// expected by Granitic
 func (ycp *YamlContentParser) convertToStringKeyed(im map[interface{}]interface{}) (map[string]interface{}, error) {
 
 	converted := make(map[string]interface{}, len(im))
@@ -64,23 +61,6 @@ func (ycp *YamlContentParser) convertToStringKeyed(im map[interface{}]interface{
 			}
 		default:
 			newValue = v
-			/*case string:
-				newValue = ycp.stringToJsonType(v)
-			case []interface{}:
-				if err := ycp.correctArrayTypes(v); err != nil {
-					return nil, err
-				} else {
-					newValue = v
-				}
-			case float64:
-				newValue = v
-			case bool:
-				newValue = v
-			case int:
-				newValue = v
-			default:
-				m := fmt.Sprintf("Unsupported type %T for map value %v", v, v)
-				return nil, errors.New(m)*/
 		}
 
 		converted[newKey] = newValue
@@ -91,35 +71,16 @@ func (ycp *YamlContentParser) convertToStringKeyed(im map[interface{}]interface{
 
 }
 
-func (ycp *YamlContentParser) correctArrayTypes(a []interface{}) error {
-
-	fmt.Println(a)
-
-	return nil
-}
-
-func (ycp *YamlContentParser) stringToJsonType(s string) interface{} {
-	if s == "true" {
-
-		fmt.Println("con")
-		return true
-	}
-
-	if s == "false" {
-		return false
-	}
-
-	if n, err := strconv.ParseFloat(s, 64); err == nil {
-		return n
-	}
-
-	return s
-}
-
+// Extensions returns the file name extensions accepted as representing YAML files
+//
+// Implements jsonmerge.ContentParser
 func (ycp *YamlContentParser) Extensions() []string {
 	return []string{"yaml", "yml"}
 }
 
+// ContentTypes returns the HTTP content-types (MIME types) accepted as representing YAML files
+//
+// Implements jsonmerge.ContentParser
 func (ycp *YamlContentParser) ContentTypes() []string {
 	return []string{"text/x-yaml", "application/yaml", "text/yaml", "application/x-yaml"}
 }

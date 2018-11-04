@@ -2,7 +2,7 @@ packages:
 - "github.com/graniticio/granitic-yaml/test/mapping/target"
 
 components:
-  postConfigured:
+  preConfigured:
     type: target.AllSupported
     Int: 6
     Float: 2.2
@@ -10,3 +10,11 @@ components:
     Bool: true
     Nested: ref:preConfigured
     BoolSlice: [true, false, true]
+    IntSlice:
+      - 1
+      - 2
+      - 6
+    FloatSlice:
+      - -0.1
+      - 1.555555555555555
+      - 113

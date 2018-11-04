@@ -1,0 +1,6 @@
+L1:
+  BoolVal: false
+  L2:
+    BoolVal: TRUE
+    L3:
+      IntVal: 256
