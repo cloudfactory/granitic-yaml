@@ -1,0 +1,12 @@
+packages:
+- "github.com/graniticio/granitic-yaml/test/mapping/target"
+
+components:
+  postConfigured:
+    type: target.AllSupported
+    Int: 6
+    Float: 2.2
+    String: label
+    Bool: true
+    Nested: ref:preConfigured
+    BoolSlice: [true, false, true]

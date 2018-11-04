@@ -1,0 +1,6 @@
+packages:
+- "github.com/graniticio/granitic-yaml/test/mapping/target"
+
+components:
+  preConfigured:
+    type: target.AllSupported
