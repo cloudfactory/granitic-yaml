@@ -51,7 +51,7 @@ func writeMainFile(w *bufio.Writer, projectPackage string) {
 	changePackageComment := "  //Change to a non-relative path if you want to use 'go install'"
 
 	w.WriteString("package main\n\n")
-	w.WriteString("import \"github.com/graniticio/granitic_yaml\"\n")
+	w.WriteString("import \"github.com/graniticio/granitic-yaml\"\n")
 	w.WriteString("import \"")
 	w.WriteString(projectPackage)
 	w.WriteString("/bindings\"")
