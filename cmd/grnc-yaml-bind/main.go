@@ -37,10 +37,8 @@ type YamlDefinitionLoader struct {
 // LoadAndMerge reads one or more YAML from local files or HTTP URLs and merges them into a single data structure
 func (ydl *YamlDefinitionLoader) LoadAndMerge(files []string) (map[string]interface{}, error) {
 
-	jm := new(config.JsonMerger)
+	jm := config.NewJsonMergerWithDirectLogging(new(logging.ConsoleErrorLogger), new(granitic_yaml.YamlContentParser))
 	jm.MergeArrays = true
-	jm.Logger = new(logging.ConsoleErrorLogger)
-	jm.DefaultParser = new(granitic_yaml.YamlContentParser)
 
 	return jm.LoadAndMergeConfig(files)
 
