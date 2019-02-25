@@ -1,20 +1,21 @@
-// Copyright 2016-2018 Granitic. All rights reserved.
+// Copyright 2016-2019 Granitic. All rights reserved.
 // Use of this source code is governed by an Apache 2.0 license that can be found in the LICENSE file at the root of this project.
 
 /*
 
 The grnc-yaml-bind tool - used to convert Granitic's YAML component definition files into Go source.
 
-This tool is a port of grnc-yaml-bind refer to https://godoc.org/github.com/graniticio/granitic/cmd/grnc-bind for usage instructions
+This tool is a port of grnc-yaml-bind refer to https://godoc.org/github.com/graniticio/granitic/v2/cmd/grnc-bind for usage instructions
 
 */
 package main
 
 import (
-	"github.com/graniticio/granitic-yaml"
-	"github.com/graniticio/granitic/cmd/grnc-bind/binder"
-	"github.com/graniticio/granitic/config"
-	"github.com/graniticio/granitic/logging"
+	"fmt"
+	"github.com/graniticio/granitic-yaml/v2"
+	"github.com/graniticio/granitic/v2/cmd/grnc-bind/binder"
+	"github.com/graniticio/granitic/v2/config"
+	"github.com/graniticio/granitic/v2/logging"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -25,7 +26,18 @@ func main() {
 	b := new(binder.Binder)
 	b.ToolName = "grnc-yaml-bind"
 	b.Loader = new(YamlDefinitionLoader)
-	b.Bind()
+
+	s, err := binder.SettingsFromArgs()
+
+	if err != nil {
+		fmt.Printf("%s: %s\n", b.ToolName, err.Error())
+		os.Exit(1)
+	}
+
+	pref := fmt.Sprintf("%s: ", b.ToolName)
+	b.Log = logging.NewStdoutLogger(s.LogLevel, pref)
+
+	b.Bind(s)
 
 }
 
@@ -35,9 +47,9 @@ type YamlDefinitionLoader struct {
 }
 
 // LoadAndMerge reads one or more YAML from local files or HTTP URLs and merges them into a single data structure
-func (ydl *YamlDefinitionLoader) LoadAndMerge(files []string) (map[string]interface{}, error) {
+func (ydl *YamlDefinitionLoader) LoadAndMerge(files []string, log logging.Logger) (map[string]interface{}, error) {
 
-	jm := config.NewJsonMergerWithDirectLogging(new(logging.ConsoleErrorLogger), new(granitic_yaml.YamlContentParser))
+	jm := config.NewJSONMergerWithDirectLogging(log, new(granitic_yaml.YamlContentParser))
 	jm.MergeArrays = true
 
 	return jm.LoadAndMergeConfig(files)
@@ -45,7 +57,7 @@ func (ydl *YamlDefinitionLoader) LoadAndMerge(files []string) (map[string]interf
 }
 
 // WriteMerged converts the supplied data structure to YAML and writes to disk at the specified location
-func (ydl *YamlDefinitionLoader) WriteMerged(data map[string]interface{}, path string) error {
+func (ydl *YamlDefinitionLoader) WriteMerged(data map[string]interface{}, path string, log logging.Logger) error {
 
 	b, err := yaml.Marshal(data)
 

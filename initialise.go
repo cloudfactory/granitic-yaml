@@ -1,9 +1,9 @@
 package granitic_yaml
 
 import (
-	"github.com/graniticio/granitic"
-	"github.com/graniticio/granitic/config"
-	"github.com/graniticio/granitic/ioc"
+	"github.com/graniticio/granitic/v2"
+	"github.com/graniticio/granitic/v2/config"
+	"github.com/graniticio/granitic/v2/ioc"
 )
 
 // StartGranitic starts the IoC container and populates it with the supplied list of prototype components. Any settings

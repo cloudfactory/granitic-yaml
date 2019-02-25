@@ -48,7 +48,7 @@ func (ycp *YamlContentParser) convertToStringKeyed(im map[interface{}]interface{
 		case string:
 			newKey = k
 		default:
-			m := fmt.Sprintf("Key %V is not a string", k)
+			m := fmt.Sprintf("Key %v is not a string", k)
 			return nil, errors.New(m)
 		}
 

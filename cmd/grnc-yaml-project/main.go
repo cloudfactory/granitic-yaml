@@ -2,7 +2,8 @@ package main
 
 import (
 	"bufio"
-	"github.com/graniticio/granitic/cmd/grnc-project/generate"
+	"fmt"
+	"github.com/graniticio/granitic/v2/cmd/grnc-project/generate"
 	"path/filepath"
 )
 
@@ -12,8 +13,12 @@ func main() {
 	pg.CompWriterFunc = writeComponentsFile
 	pg.ConfWriterFunc = writeConfigFile
 	pg.MainFileFunc = writeMainFile
+	pg.ModFileFunc = writeModFile
 	pg.ToolName = "grnc-yaml-project"
-	pg.Generate()
+
+	s := generate.SettingsFromArgs(pg.ExitError)
+
+	pg.Generate(s)
 
 }
 
@@ -51,7 +56,7 @@ func writeMainFile(w *bufio.Writer, projectPackage string) {
 	changePackageComment := "  //Change to a non-relative path if you want to use 'go install'"
 
 	w.WriteString("package main\n\n")
-	w.WriteString("import \"github.com/graniticio/granitic-yaml\"\n")
+	w.WriteString("import \"github.com/graniticio/granitic-yaml/v2\"\n")
 	w.WriteString("import \"")
 	w.WriteString(projectPackage)
 	w.WriteString("/bindings\"")
@@ -60,5 +65,22 @@ func writeMainFile(w *bufio.Writer, projectPackage string) {
 	w.WriteString("func main() {\n")
 	w.WriteString("\tgranitic_yaml.StartGraniticWithYaml(bindings.Components())\n")
 	w.WriteString("}\n")
+
+}
+
+func writeModFile(baseDir string, moduleName string, pg *generate.ProjectGenerator) {
+
+	modFile := filepath.Join(baseDir, "go.mod")
+
+	f := pg.OpenOutputFile(modFile)
+
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+
+	fmt.Fprintf(w, "module %s\n\n", moduleName)
+	fmt.Fprintf(w, "require github.com/graniticio/granitic-yaml/v2 v2\n")
+
+	w.Flush()
 
 }
