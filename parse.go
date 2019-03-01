@@ -5,6 +5,7 @@ package granitic_yaml
 import (
 	"errors"
 	"fmt"
+	"github.com/graniticio/granitic/v2/config"
 	"gopkg.in/yaml.v2"
 )
 
@@ -22,6 +23,14 @@ func (ycp *YamlContentParser) ParseInto(data []byte, target interface{}) error {
 
 	if err := yaml.Unmarshal(data, &firstPass); err != nil {
 		return err
+	}
+
+	if _, okay := firstPass.(map[interface{}]interface{}); !okay {
+		//Symptom of empty config file
+		empty := map[string]interface{}{}
+		*target.(*interface{}) = empty
+
+		return config.EmptyFileError{Message: "YAML config file logically empty after parsing"}
 	}
 
 	if retyped, err := ycp.convertToStringKeyed(firstPass.(map[interface{}]interface{})); err != nil {

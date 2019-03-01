@@ -24,7 +24,7 @@ func main() {
 
 func writeConfigFile(confDir string, pg *generate.ProjectGenerator) {
 
-	compFile := filepath.Join(confDir, "config.yml")
+	compFile := filepath.Join(confDir, "base.yml")
 	f := pg.OpenOutputFile(compFile)
 
 	defer f.Close()
@@ -37,7 +37,7 @@ func writeConfigFile(confDir string, pg *generate.ProjectGenerator) {
 
 func writeComponentsFile(compDir string, pg *generate.ProjectGenerator) {
 
-	compFile := filepath.Join(compDir, "components.yml")
+	compFile := filepath.Join(compDir, "common.yml")
 	f := pg.OpenOutputFile(compFile)
 
 	defer f.Close()
@@ -80,6 +80,7 @@ func writeModFile(baseDir string, moduleName string, pg *generate.ProjectGenerat
 
 	fmt.Fprintf(w, "module %s\n\n", moduleName)
 	fmt.Fprintf(w, "require github.com/graniticio/granitic-yaml/v2 v2\n")
+	fmt.Fprintf(w, "require github.com/graniticio/granitic/v2 v2\n")
 
 	w.Flush()
 
