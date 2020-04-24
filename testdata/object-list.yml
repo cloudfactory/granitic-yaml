@@ -1,0 +1,6 @@
+Outer:
+  ObjectList:
+    - ObjOneFOne "O1F1"
+      ObjOneFTwo "O1F2"
+    - ObjTwoFOne "O2F1"
+      ObjTwoFTwo "O2F2"
