@@ -1,0 +1,3 @@
+ExternalFacilities:
+  - FacilityA:
+      Namespace: "MyCompany"

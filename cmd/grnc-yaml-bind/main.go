@@ -11,6 +11,7 @@ This tool is a port of grnc-yaml-bind refer to https://godoc.org/github.com/gran
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/graniticio/granitic-yaml/v2"
 	"github.com/graniticio/granitic/v2/cmd/grnc-bind/binder"
@@ -19,6 +20,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -74,4 +76,75 @@ func (ydl *YamlDefinitionLoader) WriteMerged(data map[string]interface{}, path s
 	os.Exit(0)
 
 	return nil
+}
+
+func (ydl *YamlDefinitionLoader) FacilityManifest(path string) (*binder.Manifest, error) {
+
+	mf, err := os.Open(path)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to open manifest file at %s: %s", path, err.Error())
+	}
+
+	defer mf.Close()
+
+	b, err := ioutil.ReadAll(mf)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to read manifest file at %s: %s", path, err.Error())
+	}
+
+	lp := strings.ToLower(path)
+	m := new(binder.Manifest)
+
+	if strings.HasSuffix(lp, "json") {
+		//Support manifests in JSON as well as YAML
+
+		err = json.Unmarshal(b, m)
+
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse manifest file at %s: %s", path, err.Error())
+		}
+
+	} else if strings.HasSuffix(lp, "yml") || strings.HasSuffix(lp, "yaml") {
+
+		var looseParsed interface{}
+
+		ycp := new(granitic_yaml.YamlContentParser)
+
+		err = ycp.ParseInto(b, &looseParsed)
+
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse manifest file at %s: %s", path, err.Error())
+		}
+
+		return parseManifest(looseParsed, path)
+
+	} else {
+		return nil, fmt.Errorf("%s does not appear to be a YAML or JSON file", err.Error())
+	}
+
+	return m, nil
+
+}
+
+func parseManifest(i interface{}, path string) (*binder.Manifest, error) {
+
+	b, err := json.Marshal(i)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to convert the YAML manifest to JSON: %s", err.Error())
+	}
+
+	m := new(binder.Manifest)
+
+	err = json.Unmarshal(b, m)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse manifest file at %s: %s", path, err.Error())
+	}
+
+	fmt.Printf("%#v", m)
+
+	return m, nil
 }
