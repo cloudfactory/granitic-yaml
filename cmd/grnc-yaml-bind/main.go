@@ -28,6 +28,9 @@ func main() {
 	b := new(binder.Binder)
 	b.ToolName = "grnc-yaml-bind"
 	b.Loader = new(YamlDefinitionLoader)
+	b.SupportedExtensions = new(granitic_yaml.YamlContentParser).Extensions()
+
+	b.SupportedExtensions = append(b.SupportedExtensions, new(config.JSONContentParser).Extensions()...)
 
 	s, err := binder.SettingsFromArgs()
 
@@ -52,6 +55,7 @@ type YamlDefinitionLoader struct {
 func (ydl *YamlDefinitionLoader) LoadAndMerge(files []string, log logging.Logger) (map[string]interface{}, error) {
 
 	jm := config.NewJSONMergerWithDirectLogging(log, new(granitic_yaml.YamlContentParser))
+	jm.RegisterContentParser(new(config.JSONContentParser))
 	jm.MergeArrays = true
 
 	return jm.LoadAndMergeConfig(files)
