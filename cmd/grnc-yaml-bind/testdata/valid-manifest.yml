@@ -1,3 +1,7 @@
-ExternalFacilities:
-  - FacilityA:
-      Namespace: "MyCompany"
+Namespace: SomeVendor
+Facilities:
+  SoloFacility:
+    Enabled: true
+    Builder: Builder
+    Depends:
+      - TaskScheduler

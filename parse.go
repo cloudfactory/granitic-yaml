@@ -33,7 +33,7 @@ func (ycp *YamlContentParser) ParseInto(data []byte, target interface{}) error {
 		return config.EmptyFileError{Message: "YAML config file logically empty after parsing"}
 	}
 
-	if retyped, err := ycp.convertToStringKeyed(firstPass.(map[interface{}]interface{})); err != nil {
+	if retyped, err := ycp.ConvertToStringKeyed(firstPass.(map[interface{}]interface{})); err != nil {
 		return err
 	} else {
 		*target.(*interface{}) = retyped
@@ -42,9 +42,9 @@ func (ycp *YamlContentParser) ParseInto(data []byte, target interface{}) error {
 	return nil
 }
 
-// Converts the map[interface{}]interface{} maps output by the YAML parser into the map[string]interface{} maps
+// ConvertToStringKeyed converts the map[interface{}]interface{} maps output by the YAML parser into the map[string]interface{} maps
 // expected by Granitic
-func (ycp *YamlContentParser) convertToStringKeyed(im map[interface{}]interface{}) (map[string]interface{}, error) {
+func (ycp *YamlContentParser) ConvertToStringKeyed(im map[interface{}]interface{}) (map[string]interface{}, error) {
 
 	converted := make(map[string]interface{}, len(im))
 
@@ -63,7 +63,7 @@ func (ycp *YamlContentParser) convertToStringKeyed(im map[interface{}]interface{
 
 		switch v := v.(type) {
 		case map[interface{}]interface{}:
-			if c, err := ycp.convertToStringKeyed(v); err != nil {
+			if c, err := ycp.ConvertToStringKeyed(v); err != nil {
 				return nil, err
 			} else {
 				newValue = c

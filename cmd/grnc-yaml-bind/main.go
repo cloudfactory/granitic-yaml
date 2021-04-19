@@ -148,7 +148,5 @@ func parseManifest(i interface{}, path string) (*binder.Manifest, error) {
 		return nil, fmt.Errorf("unable to parse manifest file at %s: %s", path, err.Error())
 	}
 
-	fmt.Printf("%#v", m)
-
 	return m, nil
 }
