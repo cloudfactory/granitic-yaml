@@ -12,13 +12,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/graniticio/granitic-yaml/v2"
+	"io/ioutil"
+	"os"
+
+	granitic_yaml "github.com/cloudfactory/granitic-yaml/v2"
 	"github.com/graniticio/granitic/v2/cmd/grnc-bind/binder"
 	"github.com/graniticio/granitic/v2/config"
 	"github.com/graniticio/granitic/v2/logging"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
 )
 
 func main() {
